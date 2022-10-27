@@ -1,24 +1,175 @@
-import logo from './logo.svg';
 import './App.css';
+import * as React from 'react';
+import {Grid, Box, Toolbar, AppBar, IconButton, Typography, InputLabel, MenuItem, Select, FormControl, Checkbox, Button, FormGroup,FormControlLabel} from '@mui/material';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+
+import { Chart } from 'react-charts'
+
+function MyChart() {
+
+}
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  margin: theme.spacing(2),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 function App() {
+
+  const data = React.useMemo(
+    () => [
+      {
+        label: 'Series 1',
+        data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
+      },
+      {
+        label: 'Series 2',
+        data: [[0, 3], [1, 1], [2, 5], [3, 6], [4, 4]]
+      }
+    ],
+    []
+  )
+  const axes = React.useMemo(
+    () => [
+      { primary: true, type: 'linear', position: 'bottom' },
+      { type: 'linear', position: 'left' }
+    ],
+    []
+  )
+
+  const [age, setAge] = React.useState('');
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+  <div style={{
+    background: '#efefef'
+  }}>
+    <Grid container spacing={2}>
+      <Grid item md={12} lg={12}>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Dashboard
+            </Typography>
+            <Button color="inherit">Login</Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+        <div style={{
+          margin: '10px'
+        }}>
+
+
+        </div>
+      </Grid>
+
+
+      <Grid item md={3} lg={4} >
+        <Item>
+        <InputLabel id="select-type-label">Select Type</InputLabel>
+        <FormControl style={{
+          margin: '10px'
+        }} fullWidth>
+        <Select
+          labelId="select-type-label"
+          id="select-Type"
+          value={age}
+          label="Age"
+          onChange={handleChange}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+        <MenuItem value={10}>Type 1</MenuItem>
+        <MenuItem value={20}>Type 2</MenuItem>
+        <MenuItem value={30}>Type 3</MenuItem>
+        </Select>
+        </FormControl>
+
+
+        <InputLabel id="select-dataset-label">Select Dataset</InputLabel>
+        <FormControl style={{
+          margin: '10px'
+        }} fullWidth>
+        <Select
+          labelId="select-dataset-label"
+          id="select-dataset"
+          value={age}
+          label="Age"
+          onChange={handleChange}
+        >
+        <MenuItem value={10}>Dataset 1</MenuItem>
+        <MenuItem value={20}>Dataset 2</MenuItem>
+        <MenuItem value={30}>Dataset 3</MenuItem>
+        </Select>
+        </FormControl>
+
+
+        <InputLabel id="select-algorithm-label">Select Algorithm</InputLabel>
+        <FormControl style={{
+          margin: '10px'
+        }} fullWidth>
+        <Select
+          labelId="select-algorithm-label"
+          id="select-algorithm"
+          value={age}
+          label="Age"
+          onChange={handleChange}
+        >
+        <MenuItem value={10}>Algorithm 1</MenuItem>
+        <MenuItem value={20}>Algorithm 2</MenuItem>
+        <MenuItem value={30}>Algorithm 3</MenuItem>
+        </Select>
+        </FormControl>
+
+
+        </Item>
+
+        <Item>
+        <InputLabel id="select-columns">Select Columns</InputLabel>
+        <FormGroup  labelId="select-columns" style={{
+          margin: 'auto'
+        }} >
+          <FormControlLabel control={<Checkbox />} label="col1" />
+          <FormControlLabel control={<Checkbox />} label="col2" />
+        </FormGroup>
+        <div style={{
+          margin: 'auto',
+          textAlign: 'right'
+        }}>  <Button variant="contained"><PlayCircleIcon/>Submit</Button>
+
+        </div>
+        </Item>
+
+      </Grid>
+
+      <Grid item md={9} lg={8}>
+        <Item>
+
+        <div
+          style={{
+            width: '700px',
+            height: '600px'
+          }}
+        >
+        <Chart data={data} axes={axes} />
+        </div>
+
+        </Item>
+      </Grid>
+
+
+
+    </Grid>
+  </div>
   );
 }
 
