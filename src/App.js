@@ -4,6 +4,8 @@ import {Grid, Box, Toolbar, AppBar, IconButton, Typography, InputLabel, MenuItem
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import ConfigAnalysis from './components/configanalysis';
+import DashBar from './components/DashBar';
 
 import { Chart } from 'react-charts'
 
@@ -20,36 +22,16 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+
+
+
 function App() {
 
-  const data = React.useMemo(
-    () => [
-      {
-        label: 'Series 1',
-        data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
-      },
-      {
-        label: 'Series 2',
-        data: [[0, 3], [1, 1], [2, 5], [3, 6], [4, 4]]
-      }
-    ],
-    []
-  )
-  const axes = React.useMemo(
-    () => [
-      { primary: true, type: 'linear', position: 'bottom' },
-      { type: 'linear', position: 'left' }
-    ],
-    []
-  )
 
-  const [age, setAge] = React.useState('');
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
 
   return (
+
   <div style={{
     background: '#efefef'
   }}>
@@ -74,68 +56,14 @@ function App() {
         </div>
       </Grid>
 
-
       <Grid item md={3} lg={4} >
         <Item>
-        <InputLabel id="select-type-label">Select Type</InputLabel>
-        <FormControl style={{
-          margin: '10px'
-        }} fullWidth>
-        <Select
-          labelId="select-type-label"
-          id="select-Type"
-          value={age}
-          label="Age"
-          onChange={handleChange}
-        >
-        <MenuItem value={10}>Type 1</MenuItem>
-        <MenuItem value={20}>Type 2</MenuItem>
-        <MenuItem value={30}>Type 3</MenuItem>
-        </Select>
-        </FormControl>
-
-
-        <InputLabel id="select-dataset-label">Select Dataset</InputLabel>
-        <FormControl style={{
-          margin: '10px'
-        }} fullWidth>
-        <Select
-          labelId="select-dataset-label"
-          id="select-dataset"
-          value={age}
-          label="Age"
-          onChange={handleChange}
-        >
-        <MenuItem value={10}>Dataset 1</MenuItem>
-        <MenuItem value={20}>Dataset 2</MenuItem>
-        <MenuItem value={30}>Dataset 3</MenuItem>
-        </Select>
-        </FormControl>
-
-
-        <InputLabel id="select-algorithm-label">Select Algorithm</InputLabel>
-        <FormControl style={{
-          margin: '10px'
-        }} fullWidth>
-        <Select
-          labelId="select-algorithm-label"
-          id="select-algorithm"
-          value={age}
-          label="Age"
-          onChange={handleChange}
-        >
-        <MenuItem value={10}>Algorithm 1</MenuItem>
-        <MenuItem value={20}>Algorithm 2</MenuItem>
-        <MenuItem value={30}>Algorithm 3</MenuItem>
-        </Select>
-        </FormControl>
-
-
+        <DashBar/>
         </Item>
 
         <Item>
         <InputLabel id="select-columns">Select Columns</InputLabel>
-        <FormGroup  labelId="select-columns" style={{
+        <FormGroup  labelid="select-columns" style={{
           margin: 'auto'
         }} >
           <FormControlLabel control={<Checkbox />} label="col1" />
@@ -160,7 +88,7 @@ function App() {
             height: '600px'
           }}
         >
-        <Chart data={data} axes={axes} />
+
         </div>
 
         </Item>
@@ -169,6 +97,8 @@ function App() {
 
 
     </Grid>
+
+
   </div>
   );
 }
