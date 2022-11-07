@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import ConfigAnalysis from './components/configanalysis';
 import DashBar from './components/DashBar';
+import Drevised from './components/Drevised'
 
 import { Chart } from 'react-charts'
 
@@ -14,7 +15,7 @@ function MyChart() {
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  backgroundcolor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(2),
   margin: theme.spacing(2),
@@ -57,25 +58,10 @@ function App() {
       </Grid>
 
       <Grid item md={3} lg={4} >
-        <Item>
-        <DashBar/>
-        </Item>
 
-        <Item>
-        <InputLabel id="select-columns">Select Columns</InputLabel>
-        <FormGroup  labelid="select-columns" style={{
-          margin: 'auto'
-        }} >
-          <FormControlLabel control={<Checkbox />} label="col1" />
-          <FormControlLabel control={<Checkbox />} label="col2" />
-        </FormGroup>
-        <div style={{
-          margin: 'auto',
-          textAlign: 'right'
-        }}>  <Button variant="contained"><PlayCircleIcon/>Submit</Button>
+        <Drevised/>
 
-        </div>
-        </Item>
+
 
       </Grid>
 

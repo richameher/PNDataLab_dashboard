@@ -17,6 +17,14 @@ def fecth_algorithm_type():
     print("fetched_types",json.dumps({"types":["Regression","Classification"]}))
     return json.dumps(dict_result),200
 
+
+@app.route("/api/get_metadata", methods=["GET"])
+@cross_origin()
+def get_metadata():
+    dict_result = {}
+    dict_result["columns"]=["SepalLengthCm","SepalWidth","PetalLengthCm","PetalWidthCm"]
+    return json.dumps(dict_result),200
+
 # main driver function
 if __name__ == '__main__':
 

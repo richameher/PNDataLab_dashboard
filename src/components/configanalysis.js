@@ -23,7 +23,7 @@ export default class ConfigAnalysis extends React.Component {
 
          <FormControl style={{
            margin: '10px'
-         }} fullWidth disabled={this.state.disabled}>
+         }} fullWidth disabled={this.props.disabled}>
          <InputLabel id="selectlabel">Select {this.props.selectOption}</InputLabel>
          <Select
            labelid="selectlabel"

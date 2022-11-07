@@ -1,5 +1,6 @@
 import React from "react";
 import ConfigAnalysis from './configanalysis';
+import Checkcolumns from './checkcolumns.js'
 
 export default class DashBar extends React.Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class DashBar extends React.Component {
         tasks: ["None"],
         datasets:["None"],
         algorithms:["None"],
+        loading: false,
       }
   }
 
@@ -42,9 +44,10 @@ export default class DashBar extends React.Component {
   render(){
     return (
       <div>
-      <ConfigAnalysis name={this.state.tasks} selectOption="Task"> </ConfigAnalysis>
-      <ConfigAnalysis name={this.state.datasets} selectOption="Dataset"> </ConfigAnalysis>
-      <ConfigAnalysis name={this.state.algorithms} selectOption="Algorithm"> </ConfigAnalysis>
+      <ConfigAnalysis name={this.state.tasks} selectOption="Task" disabled={false}> </ConfigAnalysis>
+      <ConfigAnalysis name={this.state.datasets} selectOption="Dataset" disabled={false}> </ConfigAnalysis>
+      <ConfigAnalysis name={this.state.algorithms} selectOption="Algorithm" disabled={false}> </ConfigAnalysis>
+      <Checkcolumns ></Checkcolumns>
       </div>
     )
   }
