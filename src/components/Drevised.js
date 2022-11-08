@@ -33,8 +33,9 @@ export default class Drevised extends React.Component {
         columns: [], // stores columns from dataset
         column_x_checked: null, //store the checked x and y column for some algorithms
         column_y_checked: null,
-        columns_checked: [], // store the checked columns for PCA like algorithms
-        disable_submit_button: false
+        columns_checked: {}, // store the checked columns for PCA like algorithms
+        disable_submit_button: false,
+        set_checked_state: false
       }
   }
 
@@ -71,7 +72,8 @@ export default class Drevised extends React.Component {
                     disabled_algo: true,
                     disable_submit_button: true,
                     task_value:"",
-                    algorithm_value:"" }); // disable algo and submit button
+                    algorithm_value:"",
+                    columns_checked:{} }); // disable algo and submit button
       // console.log("Setting dataset value as:", event.target.value);
       // this.getDataSetcolumns(); // get dataset columns
       this.getColsandTasks(event.target.value);
@@ -91,7 +93,7 @@ export default class Drevised extends React.Component {
                   let response = JSON.parse(xhr.responseText);
 
                   this.setState({columns: response.columns, tasks: response.tasks});
-                  console.log(response);
+
               } else {
                   let response = JSON.parse(xhr.responseText)
                   this.setState({errorFromServer: response.error});
@@ -131,16 +133,26 @@ export default class Drevised extends React.Component {
                       algorithms:[""], // reset task
                       disabled_algo: false, // enable task
                       disable_submit_button: false,
-                      algorithm_value:"" });
+                      algorithm_value:""});
         this.getAlgorithms(event.target.value);
 
       }
 
-
+      handleCheckBox = (event) => {
+          // setState(event.target.checked);
+          let copyColumnsChecked = this.state.columns_checked;
+          copyColumnsChecked[event.target.value] = event.target.checked;
+          this.setState({columns_checked:copyColumnsChecked});
+  };
 
       handleChangeAlgo = (event) =>{
         this.setState({algorithm_value: event.target.value})
 
+      }
+
+      handleSubmit = () => {
+         // issue API call
+         console.log("Retrive data graph", this.state.columns_checked);
       }
 
   render(){
@@ -208,7 +220,7 @@ export default class Drevised extends React.Component {
         height:'300px'
       }} >
       {this.state.columns.map((column, idx) => (
-        <FormControlLabel key={idx} control={<Checkbox />} label={column} />
+        <FormControlLabel key={column} value={column} onChange={this.handleCheckBox} control={<Checkbox />} label={column} />
       ))}
       </FormGroup>
       </div>
@@ -217,7 +229,7 @@ export default class Drevised extends React.Component {
         margin: 'auto',
         padding:'2em',
         textAlign: 'right'
-      }}>  <Button disabled={this.state.submitEnable} variant="contained"><PlayCircleIcon/>Submit</Button>
+      }}>  <Button onClick={this.handleSubmit} disabled={this.state.disable_submit_button} variant="contained"><PlayCircleIcon/>Submit</Button>
 
       </div>
       </Item>

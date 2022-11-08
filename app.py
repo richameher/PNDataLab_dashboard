@@ -87,23 +87,6 @@ def get_algorithms(task_id):
     # except:
     #     return json.dumps({"error": "Error occured when retriving tasks for this dataset"}), 400
 
-# @app.route("/api/dashboard", methods=["GET"])
-# @cross_origin()
-# def fecth_algorithm_type():
-#     dict_result = {}
-#     dict_result["tasks"]=["Regression","Classification"]
-#     dict_result["datasets"]=["Dataset1","Dataset2"]
-#     dict_result["algorithms"]=["Alg1","Alg2"]
-#     print("fetched_types",json.dumps({"types":["Regression","Classification"]}))
-#     return json.dumps(dict_result),200
-#
-#
-# @app.route("/api/get_metadata", methods=["GET"])
-# @cross_origin()
-# def get_metadata():
-#     dict_result = {}
-#     dict_result["columns"]=["SepalLengthCm","SepalWidth","PetalLengthCm","PetalWidthCm"]
-#     return json.dumps(dict_result),200
 
 # main driver function
 if __name__ == '__main__':
