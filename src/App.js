@@ -6,7 +6,8 @@ import { styled } from '@mui/material/styles';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import ConfigAnalysis from './components/configanalysis';
 import DashBar from './components/DashBar';
-import Drevised from './components/Drevised'
+import Drevised from './components/Drevised';
+import ScatterChart from './components/ScatterChart';
 
 import { Chart } from 'react-charts'
 
@@ -74,7 +75,7 @@ function App() {
             height: '600px'
           }}
         >
-
+        <ScatterChart/>
         </div>
 
         </Item>
