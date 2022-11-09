@@ -1,10 +1,24 @@
 import React from "react";
-import {InputLabel, MenuItem, Select, FormControl} from '@mui/material';
-import { FormGroup, Checkbox, FormControlLabel, Button} from '@mui/material';
+import {Grid,InputLabel, MenuItem, Select, FormControl} from '@mui/material';
+import { FormGroup, Checkbox, FormControlLabel, Button, Box, Toolbar, AppBar, IconButton, Typography} from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import ScatterChart from './ScatterChart';
 
+
+export const data_results = {
+  datasets: [
+    {
+      label: 'A dataset',
+      data: [{
+        'x': 0.5,
+        'y': 0.3
+      }, {x:2, y:2}, {x: 1.0, y: 1.0}],
+      backgroundColor: 'rgba(255, 99, 132, 1)',
+    },
+  ],
+};
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundcolor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -35,7 +49,9 @@ export default class Drevised extends React.Component {
         column_y_checked: null,
         columns_checked: {}, // store the checked columns for PCA like algorithms
         disable_submit_button: false,
-        set_checked_state: false
+        set_checked_state: false,
+        results:data_results,
+        results_retrived: false
       }
   }
 
@@ -128,6 +144,30 @@ export default class Drevised extends React.Component {
             xhr.send();
         }
 
+      getGraphData = (dataset_id, algorithm_id, columns_selected) => {
+              var xhr = new XMLHttpRequest();
+
+              xhr.onreadystatechange = function () {
+                  // Only run if the request is complete
+                  if (xhr.readyState !== 4) {
+                      return;
+                  }
+                  if (xhr.status >= 200 && xhr.status < 300) {
+                      let response = JSON.parse(xhr.responseText);
+
+                      this.setState({results:response.data_results,results_retrived:true});
+                      console.log(response);
+                  } else {
+                      let response = JSON.parse(xhr.responseText)
+                      this.setState({errorFromServer: response.error});
+                  }
+              }.bind(this);
+              xhr.open("POST", "http://127.0.0.1:5000/api/make_evaluation_graph");
+              xhr.setRequestHeader('Content-Type', 'application/json');
+
+              xhr.send(JSON.stringify({'data':{dataset_id: dataset_id,algorithm_id:algorithm_id, 'columns_selected': columns_selected}}));
+      }
+
       handleChangeTask = (event) => {
         this.setState({task_value: event.target.value,
                       algorithms:[""], // reset task
@@ -151,93 +191,126 @@ export default class Drevised extends React.Component {
       }
 
       handleSubmit = () => {
-         // issue API call
-         console.log("Retrive data graph", this.state.columns_checked);
+         this.getGraphData(this.state.dataset_value, this.state.algorithm_value, this.state.columns_checked);
       }
 
   render(){
+    let GraphContent;
+    if (this.state.results_retrived){
+      GraphContent = <ScatterChart results={this.state.results}></ScatterChart>
+    }
+    else{
+      GraphContent = <div>  </div>
+    }
     return (
-      <div>
-      <Item>
-
-      <FormControl style={{
-        margin: '10px'
-      }} fullWidth disabled={this.state.disabled_dataset}>
-      <InputLabel id="select-label-dataset">Select Dataset</InputLabel>
-      <Select
-        labelid="select-label-dataset"
-        value={this.state.dataset_value}
-        label="select-dataset"
-        onChange={this.handleChangeDatasets}
-      >
-
-      {Object.keys(this.state.datasets).map((keyName, idx) => (
-        <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.datasets[keyName]}</MenuItem>
-      ))}
-      </Select>
-      </FormControl>
-
-      <FormControl style={{
-        margin: '10px'
-      }} fullWidth disabled={this.state.disabled_tasks}>
-      <InputLabel id="select-label-task">Select Task</InputLabel>
-      <Select
-        labelid="select-label-task"
-        value={this.state.task_value}
-        label="select-task"
-        onChange={this.handleChangeTask}
-      >
-
-      {Object.keys(this.state.tasks).map((keyName, idx) => (
-        <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.tasks[keyName]}</MenuItem>
-      ))}
-      </Select>
-      </FormControl>
-
-      <FormControl style={{
-        margin: '10px'
-      }} fullWidth disabled={this.state.disabled_algo}>
-      <InputLabel id="select-label-algo">Select Algorithm</InputLabel>
-      <Select
-        labelid="select-label-algo"
-        value={this.state.algorithm_value}
-        label="select-algo"
-        onChange={this.handleChangeAlgo}
-      >
-
-      {Object.keys(this.state.algorithms).map((keyName, idx) => (
-        <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.algorithms[keyName]}</MenuItem>
-      ))}
-      </Select>
-      </FormControl>
-      </Item>
-
-      <Item>
-      <div >
-      <InputLabel id="select-columns">Select columns</InputLabel>
-      <FormGroup  labelid="select-columns" style={{
-        margin: 'auto',
-        height:'300px'
-      }} >
-      {this.state.columns.map((column, idx) => (
-        <FormControlLabel key={column} value={column} onChange={this.handleCheckBox} control={<Checkbox />} label={column} />
-      ))}
-      </FormGroup>
-      </div>
-
       <div style={{
-        margin: 'auto',
-        padding:'2em',
-        textAlign: 'right'
-      }}>  <Button onClick={this.handleSubmit} disabled={this.state.disable_submit_button} variant="contained"><PlayCircleIcon/>Submit</Button>
-
+      background: '#efefef'
+      }}>
+      <Grid container spacing={2}>
+         <Grid item md={12} lg={12}>
+            <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+               <Toolbar>
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  Dashboard
+                  </Typography>
+                  <Button color="inherit">Login</Button>
+               </Toolbar>
+            </AppBar>
+            </Box>
+         </Grid>
+         <Grid item md={3} lg={4} >
+            <div>
+               <Item>
+                  <FormControl style={{
+                  margin: '10px'
+                  }} fullWidth disabled={this.state.disabled_dataset}>
+                  <InputLabel id="select-label-dataset">Select Dataset</InputLabel>
+                  <Select
+                     labelid="select-label-dataset"
+                     value={this.state.dataset_value}
+                     label="select-dataset"
+                     onChange={this.handleChangeDatasets}
+                     >
+                     {Object.keys(this.state.datasets).map((keyName, idx) => (
+                     <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.datasets[keyName]}</MenuItem>
+                     ))}
+                  </Select>
+                  </FormControl>
+                  <FormControl style={{
+                  margin: '10px'
+                  }} fullWidth disabled={this.state.disabled_tasks}>
+                  <InputLabel id="select-label-task">Select Task</InputLabel>
+                  <Select
+                     labelid="select-label-task"
+                     value={this.state.task_value}
+                     label="select-task"
+                     onChange={this.handleChangeTask}
+                     >
+                     {Object.keys(this.state.tasks).map((keyName, idx) => (
+                     <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.tasks[keyName]}</MenuItem>
+                     ))}
+                  </Select>
+                  </FormControl>
+                  <FormControl style={{
+                  margin: '10px'
+                  }} fullWidth disabled={this.state.disabled_algo}>
+                  <InputLabel id="select-label-algo">Select Algorithm</InputLabel>
+                  <Select
+                     labelid="select-label-algo"
+                     value={this.state.algorithm_value}
+                     label="select-algo"
+                     onChange={this.handleChangeAlgo}
+                     >
+                     {Object.keys(this.state.algorithms).map((keyName, idx) => (
+                     <MenuItem value={keyName} key={keyName}>{keyName} | {this.state.algorithms[keyName]}</MenuItem>
+                     ))}
+                  </Select>
+                  </FormControl>
+               </Item>
+               <Item>
+                  <div >
+                     <InputLabel id="select-columns">Select columns</InputLabel>
+                     <FormGroup  labelid="select-columns" style={{
+                     margin: 'auto',
+                     height:'300px'
+                     }} >
+                     {this.state.columns.map((column, idx) => (
+                     <FormControlLabel key={column} value={column} onChange={this.handleCheckBox} control={
+                     <Checkbox />
+                     } label={column} />
+                     ))}
+                     </FormGroup>
+                  </div>
+                  <div style={{
+                  margin: 'auto',
+                  padding:'2em',
+                  textAlign: 'right'
+                  }}>
+                  <Button onClick={this.handleSubmit} disabled={this.state.disable_submit_button} variant="contained">
+                     <PlayCircleIcon/>
+                     Submit
+                  </Button>
+            </div>
+            </Item>
+            </div>
+         </Grid>
+         <Grid item md={9} lg={8}>
+            <Item>
+               <div
+               style={{
+               width: '700px',
+               height: '600px'
+               }}
+               >
+               {GraphContent}
+               </div>
+            </Item>
+         </Grid>
+      </Grid>
       </div>
-      </Item>
 
 
-
-
-      </div>
     )
   }
 

@@ -34,59 +34,7 @@ function App() {
 
   return (
 
-  <div style={{
-    background: '#efefef'
-  }}>
-    <Grid container spacing={2}>
-      <Grid item md={12} lg={12}>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Dashboard
-            </Typography>
-            <Button color="inherit">Login</Button>
-          </Toolbar>
-        </AppBar>
-      </Box>
-        <div style={{
-          margin: '10px'
-        }}>
-
-
-        </div>
-      </Grid>
-
-      <Grid item md={3} lg={4} >
-
-        <Drevised/>
-
-
-
-      </Grid>
-
-      <Grid item md={9} lg={8}>
-        <Item>
-
-        <div
-          style={{
-            width: '700px',
-            height: '600px'
-          }}
-        >
-        <ScatterChart/>
-        </div>
-
-        </Item>
-      </Grid>
-
-
-
-    </Grid>
-
-
-  </div>
+  <Drevised/>
   );
 }
 

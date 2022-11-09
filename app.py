@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, request
 import json
 from flask_cors import CORS, cross_origin
+from model import ModelPipeline
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -9,7 +10,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # Datasets and acceptable Tasks
 datasets = {0:"Iris Dataset", 1:"Diabetes Dataset", 2:"Sample"}
 
-metadata = {0: ["SepalWidth", "SepalLengthCm"], 1:["Age", "Height"]}
+metadata = {0: ["SepalLengthCm", "SepalWidthCm","PetalLengthCm","PetalWidthCm","Species"], 1:["Age", "Height"]}
 # tasks table task_id, task_name
 tasks = {0:"Regression", 1:"Classification", 2:"Unsupervised"}
 
@@ -18,7 +19,7 @@ dataset_tasks = {0:[0, 1, 2], 1:[0]}
 
 # tasks and algorithms
 # algorithms table alg_id, alg_name
-algorithms = {0:"Linear Regression", 1:"PCA", 2:"KNN", 3:"Naive Bayes"}
+algorithms = {0:"Linear Regression", 1:"pca", 2:"KNN", 3:"Naive Bayes"}
 
 # algorithm and task relationship task_id algorith id
 tasks_algos = {0:[0], 1:[2,3], 2:[1]}
@@ -87,6 +88,32 @@ def get_algorithms(task_id):
     # except:
     #     return json.dumps({"error": "Error occured when retriving tasks for this dataset"}), 400
 
+@app.route("/api/make_evaluation_graph", methods=["POST"])
+@cross_origin()
+def make_evaluation_graph():
+    data = json.loads(request.data)['data']
+
+    col_list = []
+    for k,v in data['columns_selected'].items():
+        if v == True:
+            col_list.append(k)
+
+    response = {}
+    model = ModelPipeline(algorithms[int(data['algorithm_id'])],'data/Iris.csv',col_list, {'n_components':2})
+    model.process_data()
+    model.run_algorithm()
+    print("Result from run",model.result)
+
+    response['data_results']={
+      'datasets': [
+        {
+          'label': 'A dataset',
+          'data': model.result,
+          'backgroundColor': 'rgba(255, 99, 132, 1)',
+        },
+      ],
+    }
+    return json.dumps(response), 200
 
 # main driver function
 if __name__ == '__main__':

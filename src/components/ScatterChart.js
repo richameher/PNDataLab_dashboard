@@ -28,18 +28,7 @@ export const options = {
 },
 };
 
-export const data = {
-  datasets: [
-    {
-      label: 'A dataset',
-      data: [{
-        x: 0.7,
-        y: 0.5
-      }, {x:0, y:0}, {x: 1.0, y: 1.0}],
-      backgroundColor: 'rgba(255, 99, 132, 1)',
-    },
-  ],
-};
+
 
 export default class ScatterChart extends React.Component {
     constructor(props) {
@@ -47,8 +36,10 @@ export default class ScatterChart extends React.Component {
         // load state from previous configuration
     }
 
+
     render() {
-       return <Scatter options={options} data={data} />;;
+  
+       return <Scatter options={options} data={this.props.results} />;;
 
     }
 }
