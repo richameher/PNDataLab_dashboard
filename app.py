@@ -8,18 +8,19 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Datasets and acceptable Tasks
-datasets = {0:"Iris Dataset", 1:"Diabetes Dataset", 2:"Sample"}
+datasets = {0:"iris", 1:"diabetes"}
 
-metadata = {0: ["SepalLengthCm", "SepalWidthCm","PetalLengthCm","PetalWidthCm","Species"], 1:["Age", "Height"]}
+metadata = {0: ["SepalLengthCm", "SepalWidthCm","PetalLengthCm","PetalWidthCm","Species"],
+1:['Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','DiabetesPedigreeFunction','Age','Outcome']}
 # tasks table task_id, task_name
 tasks = {0:"Regression", 1:"Classification", 2:"Unsupervised"}
 
 # relationshio table for each dataset and task
-dataset_tasks = {0:[0, 1, 2], 1:[0]}
+dataset_tasks = {0:[0, 1, 2], 1:[2]}
 
 # tasks and algorithms
 # algorithms table alg_id, alg_name
-algorithms = {0:"Linear Regression", 1:"pca", 2:"KNN", 3:"Naive Bayes"}
+algorithms = {0:"Linear Regression", 1:"pca (n_component=2)", 2:"KNN", 3:"Naive Bayes"}
 
 # algorithm and task relationship task_id algorith id
 tasks_algos = {0:[0], 1:[2,3], 2:[1]}
@@ -99,15 +100,18 @@ def make_evaluation_graph():
             col_list.append(k)
 
     response = {}
-    model = ModelPipeline(algorithms[int(data['algorithm_id'])],'data/Iris.csv',col_list, {'n_components':2})
+    algorithm_name = algorithms[int(data['algorithm_id'])]
+    dataset_name = datasets[int(data['dataset_id'])]
+    config = {'n_components':2}
+    model = ModelPipeline(algorithm_name,'data/'+dataset_name+'.csv',col_list, config)
     model.process_data()
     model.run_algorithm()
-    print("Result from run",model.result)
+
 
     response['data_results']={
       'datasets': [
         {
-          'label': 'A dataset',
+          'label': algorithm_name+dataset_name,
           'data': model.result,
           'backgroundColor': 'rgba(255, 99, 132, 1)',
         },

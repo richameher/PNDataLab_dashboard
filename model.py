@@ -53,7 +53,7 @@ class ModelPipeline:
 
     def run_algorithm(self):
         # call class pca and pass dataFrameRefined
-        if self.algorithm == 'pca':
+        if 'pca' in self.algorithm:
             self.result = pca(self.dataset,self.config['n_components'])
 
         pass

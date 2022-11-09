@@ -15,12 +15,21 @@ export const options = {
   scales: {
     y: {
       beginAtZero: true,
+      title: {
+        display: true,
+        text: 'PCA 1', //hardcoded , need to change it to axis labels coming from user
+      },
     },
+    x:{
+      title: {
+        display: true,
+        text: 'PCA 2', //hardcoded , need to change it to axis labels coming from user
+      },
+    }
   },
   elements: {
     point:{
-      pointStyle:'crossRot',
-      borderColor:'blue',
+      pointStyle:'circle',
       radius: 5,
       hoverBorderWidth: 1,
     },
@@ -38,7 +47,7 @@ export default class ScatterChart extends React.Component {
 
 
     render() {
-  
+
        return <Scatter options={options} data={this.props.results} />;;
 
     }
