@@ -239,7 +239,7 @@ export default class Drevised extends React.Component {
                   </FormControl>
                   <FormControl style={{
                   margin: '10px'
-                  }} fullWidth disabled={this.state.disabled_tasks}>
+                  }} fullWidth disabled={this.state.disabled_task}>
                   <InputLabel id="select-label-task">Select Task</InputLabel>
                   <Select
                      labelid="select-label-task"
