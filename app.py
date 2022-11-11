@@ -10,8 +10,10 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # Datasets and acceptable Tasks
 datasets = {0:"iris", 1:"diabetes"}
 
-metadata = {0: ["SepalLengthCm", "SepalWidthCm","PetalLengthCm","PetalWidthCm","Species"],
-1:['Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','DiabetesPedigreeFunction','Age','Outcome']}
+metadata = {0: ["SepalLengthCm", "SepalWidthCm","PetalLengthCm","PetalWidthCm"],
+1:['Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','Age']}
+
+target_cols= {0:'Species',1:"Outcome"}
 # tasks table task_id, task_name
 tasks = {0:"Regression", 1:"Classification", 2:"Unsupervised"}
 
@@ -103,19 +105,27 @@ def make_evaluation_graph():
     algorithm_name = algorithms[int(data['algorithm_id'])]
     dataset_name = datasets[int(data['dataset_id'])]
     config = {'n_components':2}
-    model = ModelPipeline(algorithm_name,'data/'+dataset_name+'.csv',col_list, config)
+
+    model = ModelPipeline(algorithm_name,'data/'+dataset_name+'.csv',col_list, config, target_cols[int(data['dataset_id'])])
     model.process_data()
     model.run_algorithm()
+    model.process_result_clustering()
+
+    colors = ['pink','blue','green','red','yellow']
+
+    response_datasets =[]
+    color_ptr = 0
+    for k,v in model.labeled_dataset.items():
+        dict = {}
+        dict['label'] = str(k)
+        dict['data'] = v
+        dict['backgroundColor'] =colors[color_ptr]
+        color_ptr+= 1
+        response_datasets.append(dict)
 
 
     response['data_results']={
-      'datasets': [
-        {
-          'label': algorithm_name+dataset_name,
-          'data': model.result,
-          'backgroundColor': 'rgba(255, 99, 132, 1)',
-        },
-      ],
+      'datasets': response_datasets
     }
     return json.dumps(response), 200
 

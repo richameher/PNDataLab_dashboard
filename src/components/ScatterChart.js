@@ -6,10 +6,11 @@ import {
   LineElement,
   Tooltip,
   Legend,
+  Title,
 } from 'chart.js';
 import { Scatter } from 'react-chartjs-2';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend,Title);
 
 export const options = {
   scales: {
@@ -17,13 +18,13 @@ export const options = {
       beginAtZero: true,
       title: {
         display: true,
-        text: 'PCA 1', //hardcoded , need to change it to axis labels coming from user
+        text: 'PC1', //hardcoded , need to change it to axis labels coming from user
       },
     },
     x:{
       title: {
         display: true,
-        text: 'PCA 2', //hardcoded , need to change it to axis labels coming from user
+        text: 'PC2', //hardcoded , need to change it to axis labels coming from user
       },
     }
   },
@@ -35,6 +36,15 @@ export const options = {
     },
 
 },
+  plugins:{
+    legend:{
+      display: true,
+    },
+    title: {
+        display: true,
+        text: 'Principal Components'
+    }
+  },
 };
 
 
