@@ -53,8 +53,8 @@ const regression_options = {
         display: true,
         text: 'Predicted Outcome', //hardcoded , need to change it to axis labels coming from user
       },
-      max: 1.1,
-      min: -0.1,
+      max: 1.2,
+      min: -0.2,
            ticks: {
                stepSize: 1,
                callback: function(val, index) {
@@ -73,7 +73,7 @@ const regression_options = {
   elements: {
     point:{
       pointStyle:'circle',
-      radius: 5,
+      radius: 4,
       hoverBorderWidth: 1,
     },
 

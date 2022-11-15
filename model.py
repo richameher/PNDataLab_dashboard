@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
+from random import uniform
 
 
 def pca(dataset,no_components=0.95):
@@ -26,6 +28,7 @@ def knn():
 def logistic_regression(dataset, target_data):
     X, y = dataset, target_data
     clf = LogisticRegression(random_state=0).fit(X, y)
+    # clf = AdaBoostClassifier(n_estimators=100, random_state=0).fit(X, y)
     predicted_probs = clf.predict_proba(X)
     result = []
     idx = 0
@@ -36,9 +39,9 @@ def logistic_regression(dataset, target_data):
         temp_dict['x'] = prob_val[1]
 
         if prob_val[0] > prob_val[1]:
-            temp_dict['y'] = int(0)
+            temp_dict['y'] = int(0)+uniform(-0.1, 0.1)
         else:
-            temp_dict['y'] = int(1)
+            temp_dict['y'] = int(1)+uniform(-0.1, 0.1)
 
         result.append(temp_dict)
         idx+=1
