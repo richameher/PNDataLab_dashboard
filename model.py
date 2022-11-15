@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+
 
 def pca(dataset,no_components=0.95):
     X = dataset
@@ -21,8 +23,28 @@ def pca(dataset,no_components=0.95):
 def knn():
     pass
 
-def linear_regression():
-    pass
+def logistic_regression(dataset, target_data):
+    X, y = dataset, target_data
+    clf = LogisticRegression(random_state=0).fit(X, y)
+    predicted_probs = clf.predict_proba(X)
+    result = []
+    idx = 0
+
+    for prob_val in predicted_probs:
+        temp_dict = {}
+
+        temp_dict['x'] = prob_val[1]
+
+        if prob_val[0] > prob_val[1]:
+            temp_dict['y'] = int(0)
+        else:
+            temp_dict['y'] = int(1)
+
+        result.append(temp_dict)
+        idx+=1
+
+
+    return result, clf.score(X, y)
 
 ERR = -1
 
@@ -38,6 +60,7 @@ class ModelPipeline:
         self.algo_result = {}
         self.config = options
         self.labeled_dataset = {}
+        self.mean_accuracy = 0
 
     def process_data(self):
         dataFrame = pd.read_csv(self.dataset_path)
@@ -65,6 +88,10 @@ class ModelPipeline:
 
             self.algo_result = pca(self.dataset,self.config['n_components'])
 
+        elif 'Logistic' in self.algorithm:
+
+            self.algo_result, self.mean_accuracy = logistic_regression(self.dataset,self.target_dataset)
+
         pass
 
     def process_result_clustering(self):
@@ -77,6 +104,5 @@ class ModelPipeline:
                 self.labeled_dataset[self.target_dataset[i]] = []
             self.labeled_dataset[self.target_dataset[i]].append(self.algo_result[i])
 
-        print(self.labeled_dataset)
 
         return

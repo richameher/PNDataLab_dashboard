@@ -18,15 +18,16 @@ target_cols= {0:'Species',1:"Outcome"}
 tasks = {0:"Regression", 1:"Classification", 2:"Unsupervised"}
 
 # relationshio table for each dataset and task
-dataset_tasks = {0:[0, 1, 2], 1:[2]}
+dataset_tasks = {0:[2], 1:[0,2]}
 
 # tasks and algorithms
 # algorithms table alg_id, alg_name
-algorithms = {0:"Linear Regression", 1:"pca (n_component=2)", 2:"KNN", 3:"Naive Bayes"}
+algorithms = {0:"Logistic Regression", 1:"pca (n_component=2)", 2:"KNN", 3:"Naive Bayes"}
 
 # algorithm and task relationship task_id algorith id
 tasks_algos = {0:[0], 1:[2,3], 2:[1]}
 
+# graph config options for pca
 
 @app.route("/api/get_datasets", methods=["GET"])
 @cross_origin()
@@ -104,12 +105,19 @@ def make_evaluation_graph():
     response = {}
     algorithm_name = algorithms[int(data['algorithm_id'])]
     dataset_name = datasets[int(data['dataset_id'])]
-    config = {'n_components':2}
+    config = {}
+
+    if 'pca' in algorithm_name:
+        config = {'n_components':2}
 
     model = ModelPipeline(algorithm_name,'data/'+dataset_name+'.csv',col_list, config, target_cols[int(data['dataset_id'])])
     model.process_data()
     model.run_algorithm()
     model.process_result_clustering()
+
+
+
+
 
     colors = ['pink','blue','green','red','yellow']
 
@@ -127,6 +135,15 @@ def make_evaluation_graph():
     response['data_results']={
       'datasets': response_datasets
     }
+
+    if 'Logistic' in algorithm_name:
+        response['accuracy']={
+          'accuracy': model.mean_accuracy
+        }
+
+    
+
+
     return json.dumps(response), 200
 
 # main driver function

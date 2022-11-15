@@ -6,7 +6,92 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import ScatterChart from './ScatterChart';
 
+// const SERVER_URL = "http://timan103.cs.illinois.edu/PNDatalabServer";
+const SERVER_URL="http://localhost:5000";
 
+const pca_options = {
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'PC1', //hardcoded , need to change it to axis labels coming from user
+      },
+    },
+    x:{
+      title: {
+        display: true,
+        text: 'PC2', //hardcoded , need to change it to axis labels coming from user
+      },
+    }
+  },
+  elements: {
+    point:{
+      pointStyle:'circle',
+      radius: 5,
+      hoverBorderWidth: 1,
+    },
+
+},
+  plugins:{
+    legend:{
+      display: true,
+    },
+    title: {
+        display: true,
+        text: 'Principal Components'
+    }
+  },
+};
+
+const regression_options = {
+
+  scales: {
+    y: {
+
+      title: {
+        display: true,
+        text: 'Predicted Outcome', //hardcoded , need to change it to axis labels coming from user
+      },
+      max: 1.1,
+      min: -0.1,
+           ticks: {
+               stepSize: 1,
+               callback: function(val, index) {
+            // Hide every 2nd tick label
+                  return index == 1 | index == 2  ? this.getLabelForValue(val) : '';
+                }
+           },
+    },
+    x:{
+      title: {
+        display: true,
+        text: 'Probability', //hardcoded , need to change it to axis labels coming from user
+      },
+    }
+  },
+  elements: {
+    point:{
+      pointStyle:'circle',
+      radius: 5,
+      hoverBorderWidth: 1,
+    },
+
+},
+  plugins:{
+    legend:{
+      display: true,
+      title: {
+        display: true,
+        text:'True Label'
+      }
+    },
+    title: {
+        display: true,
+        text: 'Predicted Outcome vs Probability'
+    }
+  },
+};
 export const data_results = {
   datasets: [
     {
@@ -38,6 +123,7 @@ export default class Drevised extends React.Component {
         datasets:[], // store datasets loaded from API
         algorithms:["None"], // store algorithms loaded from API
         algorithm_value:"", // stores algorithm value chosen
+        accuracy:null,
         dataset_value: "", // stores dataset value chosen
         task_value:"", // stores task_value chosen
         disabled_dataset:false, // first allow only dataset selection
@@ -76,7 +162,7 @@ export default class Drevised extends React.Component {
               this.setState({errorFromServer: response.error});
           }
         }.bind(this);
-        xhr.open("GET", "http://127.0.0.1:5000/api/get_datasets");
+        xhr.open("GET", SERVER_URL+"/api/get_datasets");
         xhr.send();
 
     }
@@ -116,7 +202,7 @@ export default class Drevised extends React.Component {
               }
           }.bind(this);
 
-          xhr.open("GET", "http://127.0.0.1:5000/api/get_columns_tasks/"+dataset_id);
+          xhr.open("GET", SERVER_URL+"/api/get_columns_tasks/"+dataset_id);
           xhr.send();
       }
 
@@ -140,7 +226,7 @@ export default class Drevised extends React.Component {
                 }
             }.bind(this);
 
-            xhr.open("GET", "http://127.0.0.1:5000/api/get_algorithms/"+task_id);
+            xhr.open("GET", SERVER_URL+"/api/get_algorithms/"+task_id);
             xhr.send();
         }
 
@@ -156,13 +242,24 @@ export default class Drevised extends React.Component {
                       let response = JSON.parse(xhr.responseText);
 
                       this.setState({results:response.data_results,results_retrived:true});
+
+                      if (algorithm_id == 0){
+                        this.setState({accuracy: JSON.stringify(response.accuracy.accuracy)});
+                        this.setState({graph_options:regression_options});
+
+                      }
+                      else{
+                        this.setState({accuracy: ""});
+                        this.setState({graph_options:pca_options});
+                      }
+
                       console.log(response);
                   } else {
                       let response = JSON.parse(xhr.responseText)
                       this.setState({errorFromServer: response.error});
                   }
               }.bind(this);
-              xhr.open("POST", "http://127.0.0.1:5000/api/make_evaluation_graph");
+              xhr.open("POST", SERVER_URL+"/api/make_evaluation_graph");
               xhr.setRequestHeader('Content-Type', 'application/json');
 
               xhr.send(JSON.stringify({'data':{dataset_id: dataset_id,algorithm_id:algorithm_id, 'columns_selected': columns_selected}}));
@@ -191,17 +288,27 @@ export default class Drevised extends React.Component {
       }
 
       handleSubmit = () => {
+
+
          this.getGraphData(this.state.dataset_value, this.state.algorithm_value, this.state.columns_checked);
       }
 
   render(){
     let GraphContent;
     if (this.state.results_retrived){
-      GraphContent = <ScatterChart results={this.state.results}></ScatterChart>
+      GraphContent = <ScatterChart options={this.state.graph_options} results={this.state.results} options={this.state.graph_options}></ScatterChart>
     }
     else{
-      GraphContent = <div>  </div>
+      GraphContent = <div> </div>
     }
+    let AccuracyContent;
+    if (this.state.accuracy){
+      AccuracyContent = <p style={{ border: 'None' }}>Accuracy {this.state.accuracy}</p>
+    }
+    else{
+      AccuracyContent = <p style={{ border: 'None' }}></p>
+    }
+
     return (
       <div style={{
       background: '#efefef'
@@ -304,7 +411,13 @@ export default class Drevised extends React.Component {
                }}
                >
                {GraphContent}
+
                </div>
+            </Item>
+            <Item>
+
+              {AccuracyContent}
+
             </Item>
          </Grid>
       </Grid>

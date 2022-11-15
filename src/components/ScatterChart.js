@@ -12,7 +12,7 @@ import { Scatter } from 'react-chartjs-2';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend,Title);
 
-export const options = {
+let options = {
   scales: {
     y: {
       beginAtZero: true,
@@ -58,7 +58,7 @@ export default class ScatterChart extends React.Component {
 
     render() {
 
-       return <Scatter options={options} data={this.props.results} />;;
+       return <Scatter options={this.props.options} data={this.props.results} />;
 
     }
 }
