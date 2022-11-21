@@ -25,9 +25,33 @@ def pca(dataset,no_components=0.95):
 def knn():
     pass
 
-def logistic_regression(dataset, target_data):
+def logistic_regression_l2(dataset, target_data):
     X, y = dataset, target_data
     clf = LogisticRegression(random_state=0).fit(X, y)
+    # clf = AdaBoostClassifier(n_estimators=100, random_state=0).fit(X, y)
+    predicted_probs = clf.predict_proba(X)
+    result = []
+    idx = 0
+
+    for prob_val in predicted_probs:
+        temp_dict = {}
+
+        temp_dict['x'] = prob_val[1]
+
+        if prob_val[0] > prob_val[1]:
+            temp_dict['y'] = int(0)+uniform(-0.1, 0.1)
+        else:
+            temp_dict['y'] = int(1)+uniform(-0.1, 0.1)
+
+        result.append(temp_dict)
+        idx+=1
+
+
+    return result, clf.score(X, y)
+
+def logistic_regression_l1(dataset, target_data):
+    X, y = dataset, target_data
+    clf = LogisticRegression(random_state=0,solver='liblinear',penalty='l1').fit(X, y)
     # clf = AdaBoostClassifier(n_estimators=100, random_state=0).fit(X, y)
     predicted_probs = clf.predict_proba(X)
     result = []
@@ -91,9 +115,15 @@ class ModelPipeline:
 
             self.algo_result = pca(self.dataset,self.config['n_components'])
 
-        elif 'Logistic' in self.algorithm:
+        elif 'L2' in self.algorithm:
 
-            self.algo_result, self.mean_accuracy = logistic_regression(self.dataset,self.target_dataset)
+            self.algo_result, self.mean_accuracy = logistic_regression_l2(self.dataset,self.target_dataset)
+
+        elif 'L1' in self.algorithm:
+
+            self.algo_result, self.mean_accuracy = logistic_regression_l1(self.dataset,self.target_dataset)
+
+
 
         pass
 

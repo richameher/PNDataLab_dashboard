@@ -45,7 +45,6 @@ const pca_options = {
 };
 
 const regression_options = {
-
   scales: {
     y: {
 
@@ -73,7 +72,7 @@ const regression_options = {
   elements: {
     point:{
       pointStyle:'circle',
-      radius: 4,
+      radius: 2,
       hoverBorderWidth: 1,
     },
 
@@ -243,7 +242,7 @@ export default class Drevised extends React.Component {
 
                       this.setState({results:response.data_results,results_retrived:true});
 
-                      if (algorithm_id == 0){
+                      if (algorithm_id == 0 | algorithm_id == 2){
                         this.setState({accuracy: JSON.stringify(response.accuracy.accuracy)});
                         this.setState({graph_options:regression_options});
 

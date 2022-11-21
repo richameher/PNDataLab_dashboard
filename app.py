@@ -22,10 +22,10 @@ dataset_tasks = {0:[2], 1:[0,2]}
 
 # tasks and algorithms
 # algorithms table alg_id, alg_name
-algorithms = {0:"Logistic Regression", 1:"pca (n_component=2)", 2:"KNN", 3:"Naive Bayes"}
+algorithms = {0:"Logistic Regression(L2 Regularization)", 1:"pca (n_component=2)", 2:"Logistic Regression(L1 Regularization)", 3:"Naive Bayes"}
 
 # algorithm and task relationship task_id algorith id
-tasks_algos = {0:[0], 1:[2,3], 2:[1]}
+tasks_algos = {0:[0,2], 1:[2,3], 2:[1]}
 
 # graph config options for pca
 
@@ -141,7 +141,7 @@ def make_evaluation_graph():
           'accuracy': model.mean_accuracy
         }
 
-    
+
 
 
     return json.dumps(response), 200
